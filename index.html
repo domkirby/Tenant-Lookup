@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Find my Tenant ID</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="icon" href="./img/Search.png" type="image/png">
+  </head>
+  <body data-bs-theme=""dark">
+    <!-- As a heading -->
+    <nav class="navbar bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Tenant ID Lookup</span>
+        </div>
+    </nav>
+
+    <div class="container-sm" data-bs-theme="dark">
+        <br>
+        <div class="container">
+            <div class="row gx-5">
+                <div class="col">
+                    <div class="card">
+                        <h5 class="card-header">Intro and Instructions</h5>
+                        <div class="card-body">
+                            <p class="card-text">This tool uses the Entra ID Open ID configuration to identify in which tenant your domain resides (if it resides in a tenant).</p>
+                            <h6 class="card-subtitle">How it Works</h6>
+                            <p class="card-text">This page will query your input <strong>directly against the Entra ID API.</strong> No data is sent to or stored by our server.</p>
+                            <h6 class="card-subtitle">How to Use It</h6>
+                            Simply enter the domain name you would like to check on the right and click <i>look up.</i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h5 class="card-header">Made with 💖 by Dom Kirby</h5>
+                        <div class="card-body">
+                            <p class="card-text">Made in Denver with love by <a href="https://domkirby.com" target="_blank">Dom Kirby</a> | <a href="https://domk.pro/TenantIDLookupGitHub" target="_blank">Get the Code</a></p>
+                            <br>
+                            <img src="./img/horiz-logo-domkirby-light.png" alt="Dom Kirby Logo">
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="p-3">
+                        <!--Lookup-->
+                        <div class="card loading">
+                            <h5 class="card-header">Lookup Your Domain</h5>
+                            <div class="card-body">
+                                <form action="#" method="get" id="lookupForm">
+                                    <div class="mb-3">
+                                        <label for="domainName" class="form-label">Domain Name</label>
+                                        <input type="text" name="domainName" id="domainName" class="form-control" placeholder="contoso.com">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="submitLookupButton">
+                                        <span class="spinner-border spinner-border-sm d-none" aria-hidden="true" id="submitLookupButtonSpinner"></span>
+                                        Look Up
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <!--End Lookup-->
+                        <!--Not found-->
+                        <div class="alert alert-warning d-none" role="alert" id="notFoundBox">
+                            <h4 class="alert-head">No Tenant Found</h4>
+                            <p>It doesn't look like this domain is attached to any tenants. Be sure to double check the spelling, just to be safe.</p>
+                            <p>Entra ID Returned: <span id="entra-return-error"></span></p>
+                        </div>
+                        <!--/not found-->
+                        <!--Other Error-->
+                        <div class="alert alert-danger d-none" id="errorAlert">
+                            <h4 class="alert-head">An unknown error occurred.</h4>
+                            <p>Entra ID returned an error we were not expecting. This <i>may</i> mean that there is no tenant for the domain, but an atypical response was received.</p>
+                            <p>This may be indicative of an Entra ID server side error.</p>
+                        </div>
+                        <!--other error-->
+                        <!-- Results -->
+                        <div class="card d-none" id="resultsCard">
+                            <h5 class="card-header">Results</h5>
+                            <div class="card-body">
+                                <p class="alert alert-success">We found a tenant.</p>
+                                <ul>
+                                    <li><strong>Tenant ID: </strong><span id="tenantId"></span> <button type="button" class="btn btn-primary btm-sm" onclick="copyTenantId()">Copy</button></li>
+                                    <li><strong>Tenant Region: </strong><span id="region"></span></li>
+                                    <li><strong>Tenant Scope (for GCC): </strong><span id="scope"></span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- End Results -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="tenant-lookup.js"></script>
+    <script>
+        $("#lookupForm").on('submit', function(e) {
+            e.preventDefault();
+            startLoading();
+            lookupTenant();
+        })
+    </script>
+    
+  </body>
+</html>
